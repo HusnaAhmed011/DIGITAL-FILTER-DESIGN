@@ -58,8 +58,8 @@ The implementation of programmable FIR filtering in Verilog and a structured tes
 
 #### GTKWAVE:
 
-<img width="1496" height="946" alt="Image" src="https://github.com/user-attachments/assets/3d31eddb-f5e2-445e-801d-5c3697fb07ec" />
+<img width="1872" height="955" alt="Image" src="https://github.com/user-attachments/assets/196a284f-6dc2-4a0a-93c4-dd5e2648a91d" />
 
 #### VS TERMINAL:
 
-<img width="1282" height="831" alt="Image" src="https://github.com/user-attachments/assets/d9ab2dec-53cd-4417-ad33-35ce8f9265f4" />
+<img width="1830" height="1038" alt="Image" src="https://github.com/user-attachments/assets/18cae78b-3d03-4493-893a-6a02a352c90e" />
