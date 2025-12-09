@@ -14,42 +14,45 @@
 
 ## Description:-
 ### Software used for Implementation:
-The whole project was implemented in the Visual Studio Code, and Icarus Verilog (iverilog) was installed and embedded in the terminal. The compilation was carried out with the help of the following command:
+Design and simulation were complete written in Visual studio code with Icarus Verilog (iverilog) as compiler and simulator. This was compiled with the FIR filter Verilog module and testbench using:
 
-         code: iverilog -o pipeline_tb.vvp pipeline_tb.v pipeline_tb.v
+         code: iverilog -o digital_fir_flt_tb.vvp digital_fir_flt_tb.v digital_fir_flt.v
          
-This assembles the testbench and the design module into one simulation. The following was used to run the simulation:
+This command will compile the design file and the testbench into one executable simulation. The following was then used to launch the simulation:
 
-         code: vvp pipeline_tb.vvp
+         code: vvp digital_fir_flt_tb.vvp
          
-The result is shown in the waveform output, which verified the CPU state values cycle-by-cycle in the terminal.
+The terminal had sample-by-sample filtering results that were able to clearly indicate the difference in the Low-Pass filtering response and the High-Pass filtering response.
 
 ### GTKWAVE - Waveform Simulator:
-GTKWave was then applied to open the generated VCD file to visualize the transitions between the signal:
+The transitions of the signal in the filter were analyzed using GTKWave by simply opening the VCD file created during the simulation. Using the command:
 
-          code: gtkwave
+          code: gtkwave digital_fir_flt_tb.vcd
           
-The waveform was a clear display of how instructions moved through the four stages of pipeline over a period of time and the changes in PC, pipeline registers, ALU result, and general-purpose registers on every clock cycle. Once an instruction was enrolled into the pipeline it was simple to know when it had been received, it was at the execute stage and the result had been written back. The value of the registers at the Write-Back stage corresponded to the correct value, which demonstrated that the pipeline timing was correct. With the waveform almost the same as the values displayed in the terminal, it was confirmed that the ADD, SUB and LOAD instructions were generating the right output as well as ensuring that the processor design and testbench were working correctly with no glitches or invalid data transitions.
+the waveform viewer gave an in-depth representation of the progression of the input samples through the shift-register stages, the multiplication of the input samples with the FIR coefficients, and the development of the accumulated result on the individual clock cycle. The waveform indicated the variation in the output response on changing the filter mode between the low-pass and high-pass operation and also the gradual smoothing character in the low-pass mode and the sharp transient character in the high-pass mode. The behavior of the waveforms was found to be close to the available numerical values in the terminal, indicating that the digital FIR filter design was functioning correctly, using the right coefficient, and was functional.
 
 ### Behavioural & Testbench :
-The processor is written in behavioural Verilog using clock-driven
+The FIR filter is also realized by a behavioral Verilog implementation, based on a clock-based sample shift register:
  
-    code: always@(posedge clk)
+    code: always @(posedge clk or posedge reset)
  
-blocks, which model each pipeline stage (IF, ID, EX, WB). Instructions move through these stages one cycle at a time, and the
+The input sample is picked up, and multiplied with prestanding FIR coefficients, followed by an 8 stage delay register.
+The coefficients vectors of Low-Pass and High-Pass filters are internally stored and only one signal mode is used to control the filter mode. The use of a coefficient set is determined by a conditional operator:
  
-    code: case(opcode) 
+    code: mult[i] = x_reg[i] * (mode ? hp[i] : lp[i]);
  
- statement in the execute stage performs ADD, SUB, and LOAD operations. The register values update only in the Write-Back stage, which reflects real pipeline behaviour.
-The testbench generates the clock and reset signals and then observes how data flows through the pipeline.The statement 
+The testbench will be fed the clock, reset, and input sample sequence and mode change, and will display filtered output in real-time with:
 
-    code: $display
-    
-print the values of PC and registers at each cycle.
+    code: $display("t=%0t mode=%0d x_in=%d y_out=%d", $time, mode, x_in, y_out);
+
+It is then not hard to visualize the behavior of output as new samples pass the filter and the effect of switching between LPF and HPF on the waveform. The following was used to print a blank line between LPF and HPF results: 
+
+    code: $display("");
 
 ## Conclusion:
 
-The pipelined processor achieved a success with the implementation of ADD, SUB and LOAD commands and also generated the right output in the terminal output and the GTKWAVE waveform. The flow of instructions through the stages, as well as the updating of register values were performed in the correct order of sequence and this proved that the pipelining mechanism was working in the right way. The simulation was able to confirm that the design actually worked as desired, and also illustrated the performance benefit of pipelining over single-cycle execution.
+Digital FIR Filter was developed successfully, simulated and proved. The functionality of the Low-Pass and High-Pass responses was well substantiated by the terminal results and the output ofGTKWave. The operations of sample shift, multiplication of coefficients, accumulation and scaling logic worked as anticipated. The numerical and waveform results were found to be as expected of a FIR, thereby showing a valid implementation with no timing or arithmetic problems.
+The implementation of programmable FIR filtering in Verilog and a structured testbench that can check the behavior of signal processing cycles cycle-by-cycle are both cleanly implemented in the work.
 
 # OUTPUT 
 
